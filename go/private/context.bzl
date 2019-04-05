@@ -459,6 +459,17 @@ def _go_context_data_impl(ctx):
         ),
         _LINKER_OPTIONS_BLACKLIST,
     )
+    
+    # HACK To work around features not being ready for prime time
+    if "asan" in ctx.features:
+        ld_executable_options.append("-fsanitize=address")
+    if "tsan" in ctx.features:
+        ld_executable_options.append("-fsanitize=thread")
+    if "ubsan" in ctx.features:
+        ld_executable_options.append("-fsanitize=undefined")
+    if "msan" in ctx.features:
+        ld_executable_options.append("-fsanitize=memory")
+    
     env.update(cc_common.get_environment_variables(
         feature_configuration = feature_configuration,
         action_name = CPP_LINK_EXECUTABLE_ACTION_NAME,
